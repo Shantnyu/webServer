@@ -1,4 +1,4 @@
-# import socket module
+# Import socket module
 from socket import *
 # In order to terminate the program
 import sys
@@ -16,51 +16,57 @@ def webServer(port=13331):
         # Establish the connection
         print("Ready to serve...")
 
-        # accept incoming connection
+        # Accept incoming connection
         connectionSocket, addr = serverSocket.accept()
 
         try:
-            # handle messages received, sent by client
+            # Handle messages received, sent by the client
             message = connectionSocket.recv(1024).decode()
             filename = message.split()[1]
 
-            # opens the client requested file in binary mode
+            # Open the client requested file in binary mode
             f = open(filename[1:], "rb")
 
-            # Headers for validating http request
-            connectionSocket.send(b"HTTP/1.1 200 OK\r\n")
-            connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
-            connectionSocket.send(b"Server: SimpleWebServer\r\n")
-            connectionSocket.send(b"Connection: close\r\n")
-            # send blank line to end headers
-            connectionSocket.send(b"\r\n")
-
-            # Send the content of the requested file to the client
-            for i in f:
-                connectionSocket.send(i)
+            # Get the file content
+            file_content = f.read()
             f.close()
 
-            # closing the connection socket
+            # Headers for a valid HTTP response
+            response_headers = [
+                b"HTTP/1.1 200 OK\r\n",
+                b"Content-Type: text/html; charset=UTF-8\r\n",
+                b"Server: SimpleWebServer\r\n",
+                b"Connection: close\r\n",
+                b"Content-Length: " + bytes(len(file_content)) + b"\r\n",
+                b"\r\n"
+            ]
+
+            # Send the response headers
+            for header in response_headers:
+                connectionSocket.send(header)
+
+            # Send the content of the requested file to the client
+            connectionSocket.send(file_content)
+
+            # Close the connection socket
             connectionSocket.close()
 
         except FileNotFoundError:
-            # Handle file not found errors
-            connectionSocket.send(b"HTTP/1.1 404 Not Found\r\n")
-            connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
-            connectionSocket.send(b"Server: SimpleWebServer\r\n")
-            connectionSocket.send(b"Connection: close\r\n")
-            connectionSocket.send(b"\r\n")
-            connectionSocket.send(b"<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n")
+            # Handle file not found errors with a 404 response
+            error_response = (
+                b"HTTP/1.1 404 Not Found\r\n"
+                b"Content-Type: text/html; charset=UTF-8\r\n"
+                b"Server: SimpleWebServer\r\n"
+                b"Connection: close\r\n"
+                b"\r\n"
+                b"<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n"
+            )
+            connectionSocket.send(error_response)
             connectionSocket.close()
         except Exception as e:
             # Handle other exceptions
             print(f"An error occurred: {e}")
             connectionSocket.close()
-
-    # Commenting out the below, as it's technically not required and some students have moved it erroneously in the While loop. DO NOT DO THAT OR YOU'RE GONNA HAVE A BAD TIME.
-    # serverSocket.close()
-    # sys.exit()  # Terminate the program after sending the corresponding data
-
 
 if __name__ == "__main__":
     webServer(13331)
