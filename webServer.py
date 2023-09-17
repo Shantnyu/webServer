@@ -31,13 +31,21 @@ def webServer(port=13331):
             file_content = f.read()
             f.close()
 
+            # Determine the content type based on the file extension
+            content_type = b"text/html; charset=UTF-8"  # Default to HTML
+
+            if filename.endswith(b".jpg"):
+                content_type = b"image/jpeg"
+            elif filename.endswith(b".png"):
+                content_type = b"image/png"
+
             # Headers for a valid HTTP response
             response_headers = [
                 b"HTTP/1.1 200 OK\r\n",
-                b"Content-Type: text/html; charset=UTF-8\r\n",
                 b"Server: SimpleWebServer\r\n",
-                b"Connection: close\r\n",
+                b"Content-Type: " + content_type + b"\r\n",
                 b"Content-Length: " + bytes(len(file_content)) + b"\r\n",
+                b"Connection: close\r\n",
                 b"\r\n"
             ]
 
