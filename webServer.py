@@ -27,11 +27,11 @@ def webServer(port=13331):
             # Open the client requested file in binary mode
             f = open(filename[1:], "rb")
 
-            # Headers for validating HTTP request
+            # Send the HTTP response headers
             connectionSocket.send(b"HTTP/1.1 200 OK\r\n")
-            connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
             connectionSocket.send(b"Server: SimpleWebServer\r\n")
             connectionSocket.send(b"Connection: close\r\n")
+            connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
             # Send blank line to end headers
             connectionSocket.send(b"\r\n")
 
@@ -46,16 +46,12 @@ def webServer(port=13331):
         except Exception:
             # Headers for handling bad requests
             connectionSocket.send(b"HTTP/1.1 404 Not Found\r\n")
-            connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
             connectionSocket.send(b"Server: SimpleWebServer\r\n")
             connectionSocket.send(b"Connection: close\r\n")
+            connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
             connectionSocket.send(b"\r\n")
             connectionSocket.send(b"<html><head></head><body><h1>404 Not Found</h1></body></html>\r\n")
             connectionSocket.close()
-
-    # Commenting out the below, as it's technically not required and some students have moved it erroneously in the While loop. DO NOT DO THAT OR YOU'RE GONNA HAVE A BAD TIME.
-    # serverSocket.close()
-    # sys.exit()  # Terminate the program after sending the corresponding data
 
 if __name__ == "__main__":
     webServer(13331)
