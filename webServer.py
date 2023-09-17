@@ -37,6 +37,7 @@ def webServer(port=13331):
             for i in f:
                 connectionSocket.send(i)
             f.close()
+            connectionSocket.send(b"HTTP/1.1 404 Not Found\r\n")
             connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
             # send blank line to end headers
             connectionSocket.send(b"\r\n")
