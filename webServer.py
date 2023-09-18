@@ -34,8 +34,8 @@ def webServer(port=13331):
             connectionSocket.send(b"\r\n")
 
             # Send the content of the requested file to the client
-            for i in f:
-                connectionSocket.send(i)
+            f.read()
+            connectionSocket.send(i)
             f.close()
             connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
             connectionSocket.send(b"Server: SimpleWebServer\r\n")
