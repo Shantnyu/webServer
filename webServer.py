@@ -38,6 +38,7 @@ def webServer(port=13331):
             for i in f:
                 connectionSocket.send(i)
             f.close()
+            connectionSocket.send(b"Content-Type: text/html; charset=UTF-8\r\n")
             connectionSocket.send(b"Server: SimpleWebServer\r\n")
             connectionSocket.send(b"Connection: close\r\n\r\n")   
             # closing the connection socket
